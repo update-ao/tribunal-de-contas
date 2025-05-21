@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="pt-AO">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCA de Angola e Empoderamento Feminino</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Visualization & Content Choices:
+        - Contexto/Representação Política: Bar/Donut Chart (Chart.js) - Goal: Compare - Interaction: Tooltip. Justification: Clear visual for percentages. Data: Parlamentares (38.6% 2024, 29.6% 2021), Governo (39% total, 42.8% Ministras, 12% Sec. Estado).
+        - Contexto/Disparidades Económicas: Bar Chart (Chart.js) - Goal: Compare - Interaction: Tooltip. Justification: Effective for comparing values. Data: Lacuna rendimento (22%), Emprego informal (89.8% mulheres vs 71.2% homens).
+        - Contexto/Educação: Bar Chart (Chart.js) - Goal: Compare - Interaction: Tooltip. Justification: Clear for educational disparities. Data: Escolaridade (7 anos M vs 9.2 H), Literacia (57.2% M vs 82.6% H).
+        - Contexto/Saúde: Info Cards (HTML/Tailwind) - Goal: Inform - Interaction: None. Justification: Quick display of key stats. Data: Natalidade adolescente (138.4/1000), Casamento infantil (30%), Violência (24.7%).
+        - ISC Global: Bar Chart (Chart.js) - Goal: Inform - Interaction: Tooltip. Justification: Overview of ISC gender initiatives. Data: IDI stats (30% políticas género, etc.).
+        - TCA/Ações, Desafios, Recomendações: Text blocks, lists (HTML/Tailwind) - Goal: Inform. Justification: Direct presentation of qualitative info.
+        CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif; /* Assuming Inter is a preferred font, fallback to sans-serif */
+        }
+        /* Tailwind's Inter is usually loaded via their CDN config or npm, if not, a generic sans-serif will be used */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Default max-width, can be overridden by Tailwind classes like max-w-xl */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Base height */
+            max-height: 350px; /* Max height */
+        }
+        @media (min-width: 768px) { /* md breakpoint */
+            .chart-container {
+                height: 350px;
+                max-height: 400px;
+            }
+        }
+        .nav-link {
+            @apply px-3 py-2 rounded-md text-sm font-medium text-stone-700 hover:bg-rose-100 hover:text-rose-700 transition-colors;
+        }
+        .nav-link.active {
+            @apply bg-rose-600 text-white;
+        }
+        .section-title {
+            @apply text-3xl font-bold text-rose-700 mb-6 text-center;
+        }
+        .subsection-title {
+            @apply text-2xl font-semibold text-rose-600 mt-8 mb-4;
+        }
+        .card {
+            @apply bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300;
+        }
+        .kpi-value {
+            @apply text-3xl font-bold text-rose-600;
+        }
+        .kpi-label {
+            @apply text-sm text-stone-500;
+        }
+        /* Smooth scroll for anchor links */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-stone-100 text-stone-800">
+
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-rose-700">TCA & Empoderamento Feminino</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#introducao" class="nav-link">Introdução</a>
+                        <a href="#contexto-angola" class="nav-link">Contexto Angolano</a>
+                        <a href="#papel-isc" class="nav-link">Papel ISC</a>
+                        <a href="#tca-detalhe" class="nav-link">O TCA</a>
+                        <a href="#tca-empoderamento" class="nav-link">TCA & Empoderamento</a>
+                        <a href="#desafios-oportunidades" class="nav-link">Desafios</a>
+                        <a href="#recomendacoes" class="nav-link">Recomendações</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-stone-700 hover:text-rose-700 focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="md:hidden hidden bg-white shadow-lg">
+            <a href="#introducao" class="block nav-link text-base">Introdução</a>
+            <a href="#contexto-angola" class="block nav-link text-base">Contexto Angolano</a>
+            <a href="#papel-isc" class="block nav-link text-base">Papel ISC</a>
+            <a href="#tca-detalhe" class="block nav-link text-base">O TCA</a>
+            <a href="#tca-empoderamento" class="block nav-link text-base">TCA & Empoderamento</a>
+            <a href="#desafios-oportunidades" class="block nav-link text-base">Desafios</a>
+            <a href="#recomendacoes" class="block nav-link text-base">Recomendações</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <section id="introducao" class="py-12">
+            <h2 class="section-title">O Tribunal de Contas de Angola e o Empoderamento Feminino</h2>
+            <div class="card">
+                <p class="text-lg leading-relaxed mb-4">
+                    Bem-vindo a esta exploração interativa sobre o papel crucial do Tribunal de Contas de Angola (TCA) na promoção do empoderamento feminino. O empoderamento feminino é um pilar para o desenvolvimento sustentável e a estabilidade económica, e Angola tem integrado este imperativo nas suas estratégias nacionais.
+                </p>
+                <p class="text-lg leading-relaxed">
+                    Esta aplicação visa sintetizar as informações do relatório, destacando os progressos, os desafios persistentes e as oportunidades para o TCA fortalecer o seu contributo para a igualdade de género. Navegue pelas secções para descobrir dados, análises e recomendações chave.
+                </p>
+            </div>
+        </section>
+
+        <section id="contexto-angola" class="py-12">
+            <h2 class="section-title">Contexto da Igualdade de Género em Angola</h2>
+            <div class="card mb-8">
+                <p class="text-lg leading-relaxed">
+                Angola apresenta um panorama de progresso misto no que diz respeito à igualdade de género. Embora se observem avanços na representação política feminina em altos cargos, persistem disparidades significativas nos âmbitos económico, educacional e social. Esta secção explora os principais indicadores que moldam a realidade das mulheres em Angola.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="card">
+                    <h3 class="subsection-title text-center">Representação Política Feminina</h3>
+                    <p class="text-center text-sm text-stone-600 mb-4">Apesar de alguns marcos, a representação feminina em diferentes níveis de poder varia consideravelmente.</p>
+                    <div class="chart-container h-80 md:h-96 max-w-md">
+                        <canvas id="representacaoPoliticaChart"></canvas>
+                    </div>
+                    <p class="mt-4 text-sm text-stone-600">Angola registou 38,6% de assentos parlamentares ocupados por mulheres em Fev. 2024. No entanto, em 2021, este valor era de 29,6%. No governo central, mulheres ocupam 39% dos cargos, incluindo 42,8% de Ministras, mas apenas 12% de Secretárias de Estado e 22,2% de Governadoras Provinciais.</p>
+                </div>
+
+                <div class="card">
+                    <h3 class="subsection-title text-center">Disparidades Socioeconómicas</h3>
+                     <p class="text-center text-sm text-stone-600 mb-4">As mulheres enfrentam desafios económicos significativos, incluindo uma considerável lacuna de rendimento e alta concentração no setor informal.</p>
+                    <div class="chart-container h-80 md:h-96 max-w-md">
+                        <canvas id="disparidadeEconomicaChart"></canvas>
+                    </div>
+                     <p class="mt-4 text-sm text-stone-600">As mulheres enfrentam uma lacuna de rendimento de 22%, ganhando 78 cêntimos por cada kwanza auferido pelos homens. Cerca de 89,8% das mulheres estão no emprego informal, comparado com 71,2% dos homens.</p>
+                </div>
+
+                <div class="card">
+                    <h3 class="subsection-title text-center">Lacunas na Educação</h3>
+                    <p class="text-center text-sm text-stone-600 mb-4">As diferenças nos níveis de escolaridade e literacia entre géneros continuam a ser um desafio para o empoderamento feminino.</p>
+                    <div class="chart-container h-80 md:h-96 max-w-md">
+                        <canvas id="lacunasEducacaoChart"></canvas>
+                    </div>
+                    <p class="mt-4 text-sm text-stone-600">As mulheres têm em média 7 anos de escolaridade, contra 9,2 anos dos homens. A taxa de literacia feminina (2019) era de 57,2%, enquanto a masculina era de 82,6%.</p>
+                </div>
+                
+                <div class="card">
+                    <h3 class="subsection-title text-center">Saúde e Bem-Estar</h3>
+                    <p class="text-center text-sm text-stone-600 mb-4">Indicadores de saúde e bem-estar social revelam vulnerabilidades significativas para mulheres e meninas em Angola.</p>
+                    <div class="space-y-4 mt-6">
+                        <div class="flex items-center p-4 bg-rose-50 rounded-lg">
+                            <span class="text-3xl mr-4">🤰</span>
+                            <div>
+                                <p class="kpi-value">138.4/1000</p>
+                                <p class="kpi-label">Taxa de natalidade adolescente (2023)</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-4 bg-rose-50 rounded-lg">
+                             <span class="text-3xl mr-4">👧</span>
+                            <div>
+                                <p class="kpi-value">30%</p>
+                                <p class="kpi-label">Casamento infantil (mulheres 20-24 casadas antes dos 18, 2023)</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center p-4 bg-rose-50 rounded-lg">
+                            <span class="text-3xl mr-4">💔</span>
+                            <div>
+                                <p class="kpi-value">24.7%</p>
+                                <p class="kpi-label">Mulheres (15-49) vítimas de violência por parceiro íntimo</p>
+                            </div>
+                        </div>
+                         <div class="flex items-center p-4 bg-rose-50 rounded-lg">
+                            <span class="text-3xl mr-4">♀️</span>
+                            <div>
+                                <p class="kpi-value">29.8%</p>
+                                <p class="kpi-label">Necessidades de planeamento familiar moderno satisfeitas (2015)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="papel-isc" class="py-12 bg-stone-50">
+            <h2 class="section-title">O Papel das Instituições Superiores de Controlo (ISC)</h2>
+            <div class="card mb-8">
+                <p class="text-lg leading-relaxed">
+                As Instituições Superiores de Controlo (ISC) em todo o mundo são cada vez mais reconhecidas pelo seu papel na monitorização dos Objetivos de Desenvolvimento Sustentável, incluindo o ODS 5 (Igualdade de Género). Elas contribuem através de auditorias de género, avaliação do impacto de programas públicos e promoção de orçamentos sensíveis ao género. Esta secção analisa o envolvimento global das ISC e o posicionamento inicial do TCA de Angola neste contexto.
+                </p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8 items-start">
+                <div class="card">
+                    <h3 class="subsection-title text-center">ISC Globalmente e Igualdade de Género</h3>
+                    <p class="text-center text-sm text-stone-600 mb-4">Dados da Iniciativa de Desenvolvimento da INTOSAI (IDI) mostram um crescente compromisso das ISC com a igualdade de género.</p>
+                    <div class="chart-container h-80 md:h-96 max-w-lg">
+                        <canvas id="iscGlobalGeneroChart"></canvas>
+                    </div>
+                    <p class="mt-4 text-sm text-stone-600">Em 2023, 30% das ISC possuíam políticas de género, 40% promoviam a igualdade de género nos seus planos estratégicos e 31% realizaram pelo menos uma auditoria de género.</p>
+                </div>
+                <div class="card">
+                    <h3 class="subsection-title">O Tribunal de Contas de Angola (TCA): Compromisso Inicial</h3>
+                    <p class="leading-relaxed mb-3">O TCA demonstrou o seu compromisso ao participar no lançamento da primeira Auditoria Coordenada sobre Violência Baseada no Género (ACVBG) nos Países Africanos de Língua Oficial Portuguesa e Timor-Leste, em dezembro de 2024. Esta iniciativa alinha-se com o plano estratégico da OISC-CPLP.</p>
+                    <p class="leading-relaxed mb-3">A delegação angolana, liderada pela Juíza Conselheira Olinda França Cardoso, sublinhou o compromisso de Angola com políticas públicas abrangentes que incluem mulheres, crianças, jovens e homens. A Juíza destacou o papel do TCA na fiscalização destas políticas através de auditorias de conformidade, financeiras e de avaliação de políticas públicas.</p>
+                    <p class="leading-relaxed font-semibold text-rose-600">Esta participação sinaliza uma evolução do TCA para além da verificação financeira, tornando-se um ator na promoção da boa governação e equidade social.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="tca-detalhe" class="py-12">
+            <h2 class="section-title">O Tribunal de Contas de Angola (TCA) em Detalhe</h2>
+            <div class="card mb-8">
+                <p class="text-lg leading-relaxed">
+                O Tribunal de Contas de Angola (TCA) é a Instituição Superior de Controlo do país, fundamental para a fiscalização das finanças públicas. Compreender o seu mandato, estrutura e o quadro legal em que opera é essencial para analisar o seu potencial contributo para o empoderamento feminino.
+                </p>
+            </div>
+            <div class="space-y-8">
+                <div class="card">
+                    <h3 class="subsection-title">Mandato, Estrutura e Funções</h3>
+                    <p class="leading-relaxed mb-3">O TCA é regido pela Lei n.º 5, de 12 de abril de 1996. Uma função crucial é a emissão de parecer sobre a Conta Geral do Estado. Embora um organograma detalhado não seja público, sabe-se que possui uma estrutura colegial com Câmaras, e mulheres ocupam posições judiciais de alto nível.</p>
+                    <p class="leading-relaxed mb-3">As suas funções incluem auditorias de conformidade, financeiras e de avaliação de políticas públicas, com vigilância explícita sobre "políticas públicas direcionadas às famílias". O mandato para avaliar políticas públicas estabelece uma base para integrar perspetivas de género no seu trabalho.</p>
+                     <blockquote class="border-l-4 border-rose-500 pl-4 italic text-stone-600 my-4">
+                        "O mandato do TCA para avaliar políticas públicas (...) estabelece uma base legal e funcional clara para a integração de perspetivas de género no seu trabalho de auditoria."
+                    </blockquote>
+                </div>
+                <div class="card">
+                    <h3 class="subsection-title">Contexto Legal para Fiscalização e Orçamentação Sensível ao Género</h3>
+                    <p class="leading-relaxed mb-3">A Constituição de Angola (2010) e políticas como "Angola 2050" e o Plano de Desenvolvimento Nacional (PDN) apoiam a igualdade de género. O Ministério da Ação Social, Família e Promoção da Mulher (MASFAMU) lidera as políticas para mulheres.</p>
+                    <p class="leading-relaxed mb-3">Marcadores de género foram introduzidos no orçamento nacional de 2022, mas é necessário progresso sustentado na sua aplicação e expansão. O TCA está numa posição única para garantir que a orçamentação sensível ao género seja uma ferramenta robusta e responsável, auditando as despesas marcadas por género e responsabilizando os ministérios.</p>
+                    <div class="mt-4 p-4 bg-rose-50 rounded-lg">
+                        <p class="font-semibold text-rose-700">Oportunidade para o TCA:</p>
+                        <p class="text-stone-700">Posicionar-se como um mecanismo de aplicação crucial para a orçamentação sensível ao género, transformando-a de declaração política em ferramenta tangível para distribuição equitativa de recursos.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="tca-empoderamento" class="py-12 bg-stone-50">
+            <h2 class="section-title">O Papel do TCA na Promoção do Empoderamento Feminino</h2>
+            <div class="card mb-8">
+                <p class="text-lg leading-relaxed">
+                O Tribunal de Contas de Angola pode influenciar o empoderamento feminino através das suas operações internas e das suas funções de fiscalização externa. Esta secção explora como o TCA aborda a igualdade de género internamente, o seu envolvimento em auditorias relevantes e as suas parcerias estratégicas.
+                </p>
+            </div>
+            <div class="space-y-8">
+                <div class="card">
+                    <h3 class="subsection-title">Dimensões Internas: Políticas de Género e Representação Feminina</h3>
+                    <p class="leading-relaxed mb-3">Informação detalhada sobre políticas internas de género do TCA é limitada. Globalmente, 30% das ISC têm políticas de género. No TCA, mulheres ocupam posições de destaque (Juíza Conselheira, Vice-Presidente), sugerindo um compromisso com a liderança feminina ao mais alto nível.</p>
+                    <p class="leading-relaxed">Contudo, a ausência de políticas internas explícitas e dados sobre a representação feminina em todos os níveis impede uma avaliação completa da integração sistémica da perspetiva de género na organização, refletindo uma tendência mais ampla no setor público angolano.</p>
+                </div>
+
+                <div class="card">
+                    <h3 class="subsection-title">Fiscalização Externa: Auditoria e Orçamentação Sensível ao Género</h3>
+                    <p class="leading-relaxed mb-3"><span class="font-semibold">Auditorias de Género:</span> O TCA participou ativamente na Auditoria Coordenada sobre Violência Baseada no Género (ACVBG), focando na eficácia das políticas públicas. Isto representa uma evolução para além da auditoria financeira tradicional, alinhando-se com a tendência global das ISC de aplicar uma "lente de género".</p>
+                    <p class="leading-relaxed"><span class="font-semibold">Orçamentação Sensível ao Género:</span> Com a introdução de marcadores de género no orçamento angolano, o TCA tem um papel crucial. Pode auditar a aplicação destes marcadores e o impacto das despesas focadas no género, impondo responsabilização pelos compromissos de igualdade.</p>
+                </div>
+
+                <div class="card">
+                    <h3 class="subsection-title">Parcerias e Cooperação Internacional</h3>
+                    <p class="leading-relaxed mb-3">O envolvimento do TCA com o Observatório de Género de Angola (OGA) é crucial para aceder a dados estratégicos. Parcerias com ONU Mulheres, PNUD (que tem o Selo de Igualdade de Género para Instituições Públicas), FMI e Banco Mundial oferecem acesso a metodologias, formação e partilha de boas práticas.</p>
+                    <p class="leading-relaxed">A participação em redes como INTOSAI e AFROSAI-E integra o TCA num ecossistema global comprometido com a igualdade de género na gestão das finanças públicas.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="desafios-oportunidades" class="py-12">
+            <h2 class="section-title">Desafios e Oportunidades para um Impacto Melhorado</h2>
+            <div class="card mb-8">
+                <p class="text-lg leading-relaxed">
+                Apesar dos progressos e do potencial, o TCA enfrenta desafios na maximização do seu impacto no empoderamento feminino. Identificar estas barreiras e as oportunidades correspondentes é fundamental para traçar um caminho eficaz para a frente.
+                </p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="card">
+                    <h3 class="subsection-title">Lacunas de Dados e Metodologias</h3>
+                    <span class="text-5xl">📊</span>
+                    <p class="leading-relaxed mt-3">A falta de dados de género abrangentes e desagregados em Angola é um desafio. O recém-criado Observatório de Género de Angola (OGA) é uma oportunidade para colmatar esta lacuna. O TCA deve desenvolver metodologias de auditoria robustas e sensíveis ao género, inspirando-se em exemplos internacionais (INTOSAI, AFROSAI-E).</p>
+                </div>
+                <div class="card">
+                    <h3 class="subsection-title">Barreiras Institucionais e Culturais</h3>
+                     <span class="text-5xl">🏛️</span>
+                    <p class="leading-relaxed mt-3">Normas patriarcais e estereótipos de género persistem. A ausência de políticas internas de género formalizadas no TCA e a falta de recursos no MASFAMU são exemplos de desafios institucionais. O TCA pode liderar pelo exemplo e auditar a eficácia das políticas na mudança de atitudes culturais.</p>
+                </div>
+                <div class="card">
+                    <h3 class="subsection-title">Sustentabilidade e Alocação de Recursos</h3>
+                    <span class="text-5xl">💰</span>
+                    <p class="leading-relaxed mt-3">A sustentabilidade depende da alocação contínua de recursos. A intenção política deve ser acompanhada por investimentos concretos. O TCA pode fiscalizar se os recursos são alocados eficazmente e se os programas de género são implementados de forma sustentável.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="recomendacoes" class="py-12 bg-stone-50">
+            <h2 class="section-title">Conclusões e Recomendações</h2>
+            <div class="card mb-8">
+                <p class="text-lg leading-relaxed mb-3">
+                Angola demonstra um compromisso formal com o empoderamento feminino, mas o progresso é desigual, com barreiras culturais e lacunas na implementação de políticas. O TCA emerge como uma instituição vital na fiscalização e promoção da igualdade de género.
+                </p>
+                 <p class="text-lg leading-relaxed">
+                Para maximizar o seu impacto, são apresentadas as seguintes recomendações para o Tribunal de Contas de Angola:
+                </p>
+            </div>
+            <div class="space-y-6">
+                <div class="card">
+                    <h4 class="font-semibold text-xl text-rose-700 mb-2">1. Reforçar a Integração Interna da Perspectiva de Género no TCA</h4>
+                    <p>Desenvolver, formalizar e publicitar políticas internas de género e estratégias de RH, estabelecendo metas para representação feminina e fomentando uma cultura inclusiva. Considerar o Selo de Igualdade de Género do PNUD.</p>
+                </div>
+                <div class="card">
+                    <h4 class="font-semibold text-xl text-rose-700 mb-2">2. Integrar Sistematicamente a Perspectiva de Género em Todas as Auditorias Relevantes</h4>
+                    <p>Incorporar a análise de género em todas as auditorias (conformidade, financeiras, desempenho) que afetam a igualdade de género, avaliando se os fundos públicos alcançam resultados equitativos.</p>
+                </div>
+                <div class="card">
+                    <h4 class="font-semibold text-xl text-rose-700 mb-2">3. Aprimorar a Fiscalização da Orçamentação Sensível ao Género</h4>
+                    <p>Priorizar auditorias de desempenho sobre despesas marcadas por género, examinando a eficácia dos marcadores e o alcance dos resultados pretendidos para o empoderamento feminino.</p>
+                </div>
+                <div class="card">
+                    <h4 class="font-semibold text-xl text-rose-700 mb-2">4. Alavancar os Dados do OGA e as Metodologias Internacionais</h4>
+                    <p>Integrar dados do Observatório de Género de Angola e adaptar melhores práticas de auditoria sensíveis ao género (INTOSAI, AFROSAI-E, PNUD).</p>
+                </div>
+                <div class="card">
+                    <h4 class="font-semibold text-xl text-rose-700 mb-2">5. Advogar por Reformas Sistémicas Mais Amplas</h4>
+                    <p>Utilizar as conclusões de auditoria para advogar por ajustes políticos e alocações de recursos que abordem barreiras culturais, melhorem o acesso à justiça para as mulheres e apoiem a formalização das suas atividades económicas.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-stone-800 text-stone-300 py-8 text-center">
+        <p>&copy; 2024 Análise Interativa do Empoderamento Feminino e o TCA de Angola.</p>
+        <p class="text-sm">Baseado no relatório "O Tribunal de Contas de Angola e o Empoderamento Feminino".</p>
+         <p class="text-xs mt-2">Nota: Esta é uma representação interativa para fins de demonstração.</p>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu on link click
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+        
+        // Function to wrap text for chart labels
+        function formatLabel(str, maxwidth){
+            let sections = [];
+            let words = str.split(" ");
+            let temp = "";
+
+            words.forEach((item, index) => {
+                if(temp.length > 0) {
+                    temp += " " + item;
+                } else {
+                    temp = item;
+                }
+                if(temp.length > maxwidth){
+                    sections.push(temp);
+                    temp = "";
+                }
+                if(index == words.length - 1 && temp.length > 0){
+                    sections.push(temp);
+                }
+            });
+            return sections;
+        }
+
+        // Chart.js Configurations
+        const defaultChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        color: '#44403c' // stone-700
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0,0,0,0.7)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += context.parsed.y + '%';
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#44403c', // stone-700
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    },
+                    grid: {
+                        color: '#e7e5e4' // stone-200
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: '#44403c', // stone-700
+                        callback: function(value) {
+                            // 'this' refers to the scale instance
+                            const label = this.getLabelForValue(value);
+                            return formatLabel(label, 10); // Wrap labels longer than 10 chars
+                        }
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        };
+        
+        const pieChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                     labels: {
+                        color: '#44403c' // stone-700
+                    }
+                },
+                tooltip: {
+                     backgroundColor: 'rgba(0,0,0,0.7)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed !== null) {
+                                label += context.parsed + '%';
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        };
+
+
+        // Representação Política Chart
+        const representacaoPoliticaCtx = document.getElementById('representacaoPoliticaChart').getContext('2d');
+        new Chart(representacaoPoliticaCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Parlamentares (Fev 2024)', 'Parlamentares (2021)', 'Gov. Central (Total)', 'Ministras', 'Sec. Estado', 'Gov. Provinciais'],
+                datasets: [{
+                    label: 'Representação Feminina (%)',
+                    data: [38.6, 29.6, 39, 42.8, 12, 22.2],
+                    backgroundColor: 'rgba(190, 18, 60, 0.6)', // rose-700 with opacity
+                    borderColor: 'rgba(190, 18, 60, 1)', // rose-700
+                    borderWidth: 1
+                }]
+            },
+            options: defaultChartOptions
+        });
+
+        // Disparidade Económica Chart
+        const disparidadeEconomicaCtx = document.getElementById('disparidadeEconomicaChart').getContext('2d');
+        new Chart(disparidadeEconomicaCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Mulheres no Emprego Informal', 'Homens no Emprego Informal', 'Lacuna Rendimento (Mulheres vs Homens)'],
+                datasets: [{
+                    label: 'Percentagem (%)',
+                    data: [89.8, 71.2, 22],
+                    backgroundColor: [
+                        'rgba(190, 18, 60, 0.6)', // rose-700
+                        'rgba(120, 113, 108, 0.6)', // stone-500
+                        'rgba(234, 88, 12, 0.6)' // orange-600 for gap
+                    ],
+                    borderColor: [
+                        'rgba(190, 18, 60, 1)',
+                        'rgba(120, 113, 108, 1)',
+                        'rgba(234, 88, 12, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+             options: {...defaultChartOptions, plugins: {...defaultChartOptions.plugins, tooltip: { callbacks: {
+                label: function(context) {
+                    let label = context.dataset.label || '';
+                    if (label) { label += ': '; }
+                    if (context.parsed.y !== null) {
+                        label += context.parsed.y + '%';
+                        if (context.dataIndex === 2) {
+                           return 'Mulheres ganham 22% menos que os homens.';
+                        }
+                    }
+                    return label;
+                }}
+            }}}
+        });
+
+        // Lacunas Educação Chart
+        const lacunasEducacaoCtx = document.getElementById('lacunasEducacaoChart').getContext('2d');
+        new Chart(lacunasEducacaoCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Média Anos Escolaridade (Mulheres)', 'Média Anos Escolaridade (Homens)', 'Taxa Literacia (Mulheres 2019)', 'Taxa Literacia (Homens 2019)'],
+                datasets: [{
+                    label: 'Valor',
+                    data: [7, 9.2, 57.2, 82.6],
+                    backgroundColor: [
+                        'rgba(190, 18, 60, 0.6)', 
+                        'rgba(120, 113, 108, 0.6)',
+                        'rgba(190, 18, 60, 0.5)',
+                        'rgba(120, 113, 108, 0.5)'
+                    ],
+                    borderColor: [
+                        'rgba(190, 18, 60, 1)', 
+                        'rgba(120, 113, 108, 1)',
+                        'rgba(190, 18, 60, 0.9)',
+                        'rgba(120, 113, 108, 0.9)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {...defaultChartOptions, scales: {...defaultChartOptions.scales, y: {...defaultChartOptions.scales.y, ticks: {
+                callback: function(value, index, values) {
+                    if (index < 2) return value + ' anos'; // For first two bars (escolaridade)
+                    return value + '%'; // For last two bars (literacia)
+                }
+            }}}}
+        });
+        
+        // ISC Global Género Chart
+        const iscGlobalGeneroCtx = document.getElementById('iscGlobalGeneroChart').getContext('2d');
+        new Chart(iscGlobalGeneroCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['ISC com Pontos Focais de Género', 'ISC com Políticas de Género', 'ISC Promovendo Igualdade em Planos Estratégicos', 'ISC com Género em Estratégias RH', 'ISC com Auditorias de Género'],
+                datasets: [{
+                    label: 'Percentagem de ISC (IDI 2023)',
+                    data: [37, 30, 40, 37, 31],
+                    backgroundColor: [
+                        'rgba(190, 18, 60, 0.8)',
+                        'rgba(190, 18, 60, 0.7)',
+                        'rgba(190, 18, 60, 0.6)',
+                        'rgba(190, 18, 60, 0.5)',
+                        'rgba(190, 18, 60, 0.4)'
+                    ],
+                    borderColor: 'rgba(255,255,255,0.7)',
+                    borderWidth: 1,
+                    hoverOffset: 4
+                }]
+            },
+            options: pieChartOptions
+        });
+
+        // Active Nav Link Styling on Scroll
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('header nav a.nav-link');
+        const mobileNavLinks = document.querySelectorAll('#mobile-menu a.nav-link');
+
+        function changeNav(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    navLinks.forEach(link => {
+                        link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+                    });
+                    mobileNavLinks.forEach(link => {
+                        link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+                    });
+                }
+            });
+        }
+
+        const observerOptions = {
+            root: null,
+            rootMargin: "-50% 0px -50% 0px", // Trigger when section is in middle of viewport
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver(changeNav, observerOptions);
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+
+    </script>
+</body>
+</html>
